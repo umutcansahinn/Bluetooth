@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothManager
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
@@ -13,7 +14,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.umutcansahin.bluetooth.base.BaseFragment
+import com.umutcansahin.bluetooth.common.showToast
 import com.umutcansahin.bluetooth.databinding.FragmentBluetoothBinding
+import com.umutcansahin.bluetooth.domain.model.BluetoothDeviceDomain
 import com.umutcansahin.bluetooth.ui.bluetooth.adapter.PairedAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -36,11 +39,11 @@ class BluetoothFragment :
     private val viewModel by viewModels<BluetoothViewModel>()
 
     private val pairedAdapter by lazy {
-        PairedAdapter()
+        PairedAdapter(::connectToDevice)
     }
 
     private val scannedAdapter by lazy {
-        PairedAdapter()
+        PairedAdapter(::connectToDevice)
     }
     val enableBluetoothLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -80,8 +83,31 @@ class BluetoothFragment :
             viewModel.state
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collect {
+                    it.pairedDevices.forEach {
+                        Log.d("UmutcanSahin",it.address)
+                    }
+                    it.scannedDevices.forEach {
+                        Log.d("UmutcanSahin",it.address)
+                    }
                     pairedAdapter.submitList(it.pairedDevices)
                     scannedAdapter.submitList(it.scannedDevices)
+                    when {
+                        it.isConnecting -> {
+                            //progres göster
+                        }
+
+                        it.isConnected -> {
+                            requireContext().showToast("You are connected!")
+                        }
+
+                        else -> {
+
+                        }
+                    }
+
+                    it.errorMessage?.let { message ->
+                        requireContext().showToast(message)
+                    }
                 }
         }
     }
@@ -95,6 +121,14 @@ class BluetoothFragment :
         binding.buttonStopScan.setOnClickListener {
             viewModel.stopScan()
         }
+        binding.buttonStartServer.setOnClickListener {
+            viewModel.waitForIncomingConnections()
+        }
+    }
+
+    private fun connectToDevice(device: BluetoothDeviceDomain) {
+        viewModel.connectToDevice(device)
+        Log.d("UmutcanSahinClick","click->${device.address}")
     }
 
 }

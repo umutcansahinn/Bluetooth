@@ -21,7 +21,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewScanned"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:padding="8dp"
         app:layout_constraintTop_toBottomOf="@id/textViewScanned"
         app:layout_constraintStart_toStartOf="parent"/>
@@ -40,8 +41,9 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewPaired"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
         android:padding="8dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintTop_toBottomOf="@id/textViewPaired"
         app:layout_constraintStart_toStartOf="parent"/>
 
@@ -64,6 +66,16 @@
         android:layout_marginStart="16dp"
         app:layout_constraintTop_toBottomOf="@id/recyclerViewPaired"
         app:layout_constraintStart_toEndOf="@id/buttonStartScan"/>
+
+    <Button
+        android:id="@+id/buttonStartServer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Server"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintTop_toBottomOf="@id/recyclerViewPaired"
+        app:layout_constraintStart_toEndOf="@id/buttonStopScan"/>
 
 
 
